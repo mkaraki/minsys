@@ -1,0 +1,27 @@
+[Defines]
+  INF_VERSION = 1.25
+  BASE_NAME = MinSys
+  FILE_GUID = 2b447f6e-f07b-4984-8fbf-0f5925eb72f1
+  MODULE_TYPE = UEFI_APPLICATION
+  VERSION_STRING = 1.0
+  ENTRY_POINT = UefiMain
+
+[Sources]
+  UefiMain.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  UefiApplicationEntryPoint
+  UefiLib
+
+[Guids]
+
+[Ppis]
+
+[Protocols]
+
+[FeaturePcd]
+
+[Pcd]
