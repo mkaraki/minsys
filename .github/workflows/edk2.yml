@@ -22,10 +22,14 @@ jobs:
           path: MinSys
 
       - name: Install pre requirements
-        run: sudo apt install g++ uuid-dev 
+        run: sudo apt-get -y install g++ uuid-dev nasm
+    
+      - name: Build pre requirements
+        run: |
+          source edksetup.sh
+          make -C $GITHUB_WORKSPACE/BaseTools/Source/C
     
       - name: Build
         run: |
           source edksetup.sh
-          make -C $GITHUB_WORKSPACE/BaseTools/Source/C
           build -a X64 -t GCC5 -p MinSys/MinSys.dsc
