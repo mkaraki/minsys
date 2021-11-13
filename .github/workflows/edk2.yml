@@ -1,0 +1,31 @@
+name: Build with EDK2
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: 'tianocore/edk2'
+          submodules: 'recursive'
+          
+      - uses: actions/checkout@v2
+        with:
+          path: MinSys
+
+      - name: Install pre requirements
+        run: sudo apt install g++ uuid-dev 
+    
+      - name: Run a multi-line script
+        run: |
+          source edksetup.sh
+          make -C /home/araki-mk/edk2/BaseTools/Source/C
+          build -a X64 -t GCC5 -p MinSys/MinSys.dsc
