@@ -8,7 +8,7 @@ UefiMain (
     IN EFI_SYSTEM_TABLE *SystemTable
     )
 {
-  ClearScreen();
+  SystemTable->ConOut->ClearScreen(SystemTable->ConOut);
   Print(L"Hello EDK II.\n");
   while (1);
   return 0;
