@@ -33,3 +33,8 @@ jobs:
         run: |
           source edksetup.sh
           build -a X64 -t GCC5 -p MinSys/MinSys.dsc
+          
+      - uses: actions/upload-artifact@v2
+        with:
+          name: MinSys.efi
+          path: Build/MyPkgX64/DEBUG_GCC5/X64/MinSys.efi
