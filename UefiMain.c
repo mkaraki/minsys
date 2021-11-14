@@ -51,20 +51,9 @@ UefiMain(
     while (1)
     {
         CHAR16 input[255];
-        for (int i = 0; i < 255; i++)
-        {
-            input[i] = 0;
-        }
         Print(L"> ");
         ReadLine(SystemTable, input, 255);
-        for (int i = 0; i < 255; i++)
-        {
-            if (input[i] == 0)
-            {
-                break;
-            }
-            Print(L"%c", input[i]);
-        }
+        Print(input);
         Print(L"\n");
     }
 
