@@ -1,6 +1,9 @@
 #include <Uefi.h>
 #include <Library/UefiLib.h>
 
+// To call gBS (Global Boot Services)
+#include <Library/UefiBootServicesTableLib.h>
+
 void ReadLine(IN EFI_SYSTEM_TABLE *SystemTable, OUT CHAR16 *ReturnArray, int len);
 
 EFI_STATUS
@@ -11,6 +14,7 @@ UefiMain(
 {
     SystemTable->BootServices->SetWatchdogTimer(0, 0, 0, NULL);
     SystemTable->ConOut->ClearScreen(SystemTable->ConOut);
+
     Print(L"MinSys\n");
 
     while (1)
@@ -38,18 +42,11 @@ UefiMain(
 
 void ReadLine(IN EFI_SYSTEM_TABLE *SystemTable, OUT CHAR16 *ReturnArray, int len)
 {
-    int counter = 0;
-
     SystemTable->ConOut->EnableCursor(SystemTable->ConOut, 1);
 
     EFI_INPUT_KEY key;
-    do
+    for (int i = 0; i < len; i++)
     {
-        if (counter >= len)
-        {
-            break;
-        }
-
         UINTN KeyEvent;
 
         SystemTable->BootServices->WaitForEvent(1, &SystemTable->ConIn->WaitForKey, &KeyEvent);
@@ -57,9 +54,21 @@ void ReadLine(IN EFI_SYSTEM_TABLE *SystemTable, OUT CHAR16 *ReturnArray, int len
         SystemTable->ConIn->Reset(SystemTable->ConIn, 0);
         Print(L"%c", key.UnicodeChar);
 
-        *(ReturnArray + counter) = key.UnicodeChar;
-        counter++;
-    } while (key.UnicodeChar != L'\r');
+        if (key.UnicodeChar == L'\r')
+        {
+            *(ReturnArray + i) = 0;
+            break;
+        }
+
+        if (key.UnicodeChar == 8 && i > 0)
+        {
+            *(ReturnArray + i - 1) = 0x00;
+            i -= 2;
+            continue;
+        }
+
+        *(ReturnArray + i) = key.UnicodeChar;
+    }
     SystemTable->ConOut->EnableCursor(SystemTable->ConOut, 0);
     Print(L"\n");
 }
