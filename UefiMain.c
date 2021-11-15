@@ -64,17 +64,53 @@ int CompaireString(IN CHAR16 *a, IN CHAR16 *b)
     return 1;
 }
 
+// This return unix time too
+unsigned long getTime(int printToo)
+{
+    EFI_TIME time;
+    EFI_STATUS status = gST->RuntimeServices->GetTime(&time, NULL);
+    if (status != EFI_SUCCESS)
+    {
+        Print(L"Error getting time\n");
+        return 0;
+    }
+    unsigned long unixTime = (time.Year - 1970) * 365 * 24 * 60 * 60 + (time.Month - 1) * 30 * 24 * 60 * 60 + time.Day * 24 * 60 * 60 + time.Hour * 60 * 60 + time.Minute * 60 + time.Second;
+    if (printToo)
+    {
+        Print(L"%d-%d-%d %d:%d:%d\n", time.Year, time.Month, time.Day, time.Hour, time.Minute, time.Second);
+    }
+    return unixTime;
+}
+
 void HandleVerb(IN CHAR16 *verb, IN CHAR16 *args)
 {
-    if (CompaireString(verb, L"help"))
-    {
-        Print(L"\n");
-        Print(L"help - show help\n");
-    }
-    else if (CompaireString(verb, L"exit"))
+    if (CompaireString(verb, L"exit"))
     {
         gBS->Exit(gImageHandle, 0, 0, NULL);
-        Print(L"\n");
+    }
+    else if (CompaireString(verb, L"reset"))
+    {
+        Print(L"Ok.");
+        gST->RuntimeServices->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+    }
+    else if (CompaireString(verb, L"reinitialize"))
+    {
+        Print(L"Ok.");
+        gST->RuntimeServices->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+    }
+    else if (CompaireString(verb, L"shutdown"))
+    {
+        Print(L"Ok.");
+        gST->RuntimeServices->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
+    }
+    else if (CompaireString(verb, L"time"))
+    {
+        unsigned int unixtime = getTime(1);
+        Print(L"%u\n", unixtime);
+    }
+    else
+    {
+        Print(L"Unknown command");
     }
 }
 
