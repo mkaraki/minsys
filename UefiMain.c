@@ -37,6 +37,48 @@ void ReadLine(IN EFI_SYSTEM_TABLE *SystemTable, OUT CHAR16 *ReturnArray, int len
     Print(L"\n");
 }
 
+int GetCommandVerb(IN CHAR16 *source, OUT CHAR16 *verb, int searchLen)
+{
+    for (int i = 0; i < searchLen; i++)
+    {
+        if (source[i] == L' ')
+        {
+            *(verb + i) = 0;
+            return 1;
+        }
+        *(verb + i) = source[i];
+    }
+    return 0;
+}
+
+int CompaireString(IN CHAR16 *a, IN CHAR16 *b)
+{
+    int i = 0;
+    while (a[i] != 0)
+    {
+        if (a[i] != b[i])
+        {
+            return 0;
+        }
+        i++;
+    }
+    return 1;
+}
+
+void HandleVerb(IN CHAR16 *verb, IN CHAR16 *args)
+{
+    if (CompaireString(verb, L"help"))
+    {
+        Print(L"\n");
+        Print(L"help - show help\n");
+    }
+    else if (CompaireString(verb, L"exit"))
+    {
+        gBS->Exit(gImageHandle, 0, 0, NULL);
+        Print(L"\n");
+    }
+}
+
 EFI_STATUS
 EFIAPI
 UefiMain(
@@ -51,9 +93,11 @@ UefiMain(
     while (1)
     {
         CHAR16 input[255];
+        CHAR16 verb[16];
         Print(L"> ");
         ReadLine(SystemTable, input, 255);
-        Print(input);
+        GetCommandVerb(input, verb, 16);
+        HandleVerb(verb, input);
         Print(L"\n");
     }
 
