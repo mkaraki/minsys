@@ -64,6 +64,48 @@ int CompaireString(IN CHAR16 *a, IN CHAR16 *b)
     return 1;
 }
 
+int pow(int x, int y)
+{
+    int result = 1;
+    for (int i = 0; i < y; i++)
+    {
+        result *= x;
+    }
+    return result;
+}
+
+int parseInt(IN CHAR16 *source)
+{
+    int result = 0;
+
+    int firstpos = 0;
+    for (int i = 0; source[i] != 0; i++)
+        firstpos = i;
+
+    int isminus = 0;
+
+    int j = 0;
+    for (int i = firstpos; i >= 0; i--)
+    {
+        if (i == firstpos && source[i] == '-')
+        {
+            isminus = 1;
+            continue;
+        }
+
+        if (source[i] < L'0' || source[i] > L'9')
+            break;
+
+        result += (source[i] - L'0') * pow(10, j);
+        j++;
+    }
+
+    if (isminus)
+        result *= -1;
+
+    return result;
+}
+
 // This return unix time too
 unsigned long getTime(int printToo)
 {
@@ -107,6 +149,40 @@ void HandleVerb(IN CHAR16 *verb, IN CHAR16 *args)
     {
         unsigned int unixtime = getTime(1);
         Print(L"%u\n", unixtime);
+    }
+    else if (CompaireString(verb, L"timeset"))
+    {
+        EFI_TIME time;
+        CHAR16 strtmp[9];
+        gST->RuntimeServices->GetTime(&time, NULL);
+
+        Print(L"YEAR [1900-9999]: ");
+        ReadLine(gST, strtmp, 9);
+        time.Year = parseInt(strtmp);
+
+        Print(L"MONTH [1-12]: ");
+        ReadLine(gST, strtmp, 9);
+        time.Month = parseInt(strtmp);
+
+        Print(L"DAY [1-31]: ");
+        ReadLine(gST, strtmp, 9);
+        time.Day = parseInt(strtmp);
+
+        Print(L"HOUR [0-23]: ");
+        ReadLine(gST, strtmp, 9);
+        time.Hour = parseInt(strtmp);
+
+        Print(L"MINUTE [0-59]: ");
+        ReadLine(gST, strtmp, 9);
+        time.Minute = parseInt(strtmp);
+
+        Print(L"SECOND [0-59]: ");
+        ReadLine(gST, strtmp, 9);
+        time.Second = parseInt(strtmp);
+
+        gST->RuntimeServices->SetTime(&time);
+
+        getTime(1);
     }
     else
     {
