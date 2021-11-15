@@ -15,7 +15,6 @@ void ReadLine(IN EFI_SYSTEM_TABLE *SystemTable, OUT CHAR16 *ReturnArray, int len
 
         SystemTable->BootServices->WaitForEvent(1, &SystemTable->ConIn->WaitForKey, &KeyEvent);
         SystemTable->ConIn->ReadKeyStroke(SystemTable->ConIn, &key);
-        SystemTable->ConIn->Reset(SystemTable->ConIn, 0);
         Print(L"%c", key.UnicodeChar);
 
         if (key.UnicodeChar == L'\r')
