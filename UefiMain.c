@@ -5,38 +5,7 @@
 #include <Library/UefiBootServicesTableLib.h>
 
 #include "time.h"
-
-void ReadLine(IN EFI_SYSTEM_TABLE *SystemTable, OUT CHAR16 *ReturnArray, int len)
-{
-    SystemTable->ConOut->EnableCursor(SystemTable->ConOut, 1);
-
-    EFI_INPUT_KEY key;
-    for (int i = 0; i < len; i++)
-    {
-        UINTN KeyEvent;
-
-        SystemTable->BootServices->WaitForEvent(1, &SystemTable->ConIn->WaitForKey, &KeyEvent);
-        SystemTable->ConIn->ReadKeyStroke(SystemTable->ConIn, &key);
-        Print(L"%c", key.UnicodeChar);
-
-        if (key.UnicodeChar == L'\r')
-        {
-            *(ReturnArray + i) = 0;
-            break;
-        }
-
-        if (key.UnicodeChar == 8 && i > 0)
-        {
-            *(ReturnArray + i - 1) = 0x00;
-            i -= 2;
-            continue;
-        }
-
-        *(ReturnArray + i) = key.UnicodeChar;
-    }
-    SystemTable->ConOut->EnableCursor(SystemTable->ConOut, 0);
-    Print(L"\n");
-}
+#include "screenIO.h"
 
 int GetCommandVerb(IN CHAR16 *source, OUT CHAR16 *verb, int searchLen)
 {
@@ -158,27 +127,27 @@ void HandleVerb(IN CHAR16 *verb, IN CHAR16 *args)
         gST->RuntimeServices->GetTime(&time, NULL);
 
         Print(L"YEAR [1900-9999]: ");
-        ReadLine(gST, strtmp, 9);
+        readLine(strtmp, 9);
         time.Year = parseInt(strtmp);
 
         Print(L"MONTH [1-12]: ");
-        ReadLine(gST, strtmp, 9);
+        readLine(strtmp, 9);
         time.Month = parseInt(strtmp);
 
         Print(L"DAY [1-31]: ");
-        ReadLine(gST, strtmp, 9);
+        readLine(strtmp, 9);
         time.Day = parseInt(strtmp);
 
         Print(L"HOUR [0-23]: ");
-        ReadLine(gST, strtmp, 9);
+        readLine(strtmp, 9);
         time.Hour = parseInt(strtmp);
 
         Print(L"MINUTE [0-59]: ");
-        ReadLine(gST, strtmp, 9);
+        readLine(strtmp, 9);
         time.Minute = parseInt(strtmp);
 
         Print(L"SECOND [0-59]: ");
-        ReadLine(gST, strtmp, 9);
+        readLine(strtmp, 9);
         time.Second = parseInt(strtmp);
 
         gST->RuntimeServices->SetTime(&time);
@@ -207,7 +176,7 @@ UefiMain(
         CHAR16 input[255];
         CHAR16 verb[16];
         Print(L"> ");
-        ReadLine(SystemTable, input, 255);
+        readLine(input, 255);
         GetCommandVerb(input, verb, 16);
         HandleVerb(verb, input);
         Print(L"\n");
