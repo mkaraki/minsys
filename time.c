@@ -1,7 +1,7 @@
 #include "time.h"
 
-#define SECOND_IN_DAY 86400;
-#define UNIX_EPOCH_IN_FAIRFIELD 719161;
+#define SECOND_IN_DAY 86400
+#define UNIX_EPOCH_IN_FAIRFIELD 719161
 
 long getUnixTime(EFI_TIME *time)
 {
