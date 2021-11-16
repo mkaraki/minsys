@@ -6,6 +6,7 @@
 
 #include "time.h"
 #include "screenIO.h"
+#include "string.h"
 
 int GetCommandVerb(IN CHAR16 *source, OUT CHAR16 *verb, int searchLen)
 {
@@ -19,62 +20,6 @@ int GetCommandVerb(IN CHAR16 *source, OUT CHAR16 *verb, int searchLen)
         *(verb + i) = source[i];
     }
     return 0;
-}
-
-int CompaireString(IN CHAR16 *a, IN CHAR16 *b)
-{
-    int i = 0;
-    while (a[i] != 0)
-    {
-        if (a[i] != b[i])
-        {
-            return 0;
-        }
-        i++;
-    }
-    return 1;
-}
-
-int pow(int x, int y)
-{
-    int result = 1;
-    for (int i = 0; i < y; i++)
-    {
-        result *= x;
-    }
-    return result;
-}
-
-int parseInt(IN CHAR16 *source)
-{
-    int result = 0;
-
-    int firstpos = 0;
-    for (int i = 0; source[i] != 0; i++)
-        firstpos = i;
-
-    int isminus = 0;
-
-    int j = 0;
-    for (int i = firstpos; i >= 0; i--)
-    {
-        if (i == firstpos && source[i] == '-')
-        {
-            isminus = 1;
-            continue;
-        }
-
-        if (source[i] < L'0' || source[i] > L'9')
-            break;
-
-        result += (source[i] - L'0') * pow(10, j);
-        j++;
-    }
-
-    if (isminus)
-        result *= -1;
-
-    return result;
 }
 
 // This return unix time too
@@ -96,31 +41,31 @@ unsigned long getTime(int printToo)
 
 void HandleVerb(IN CHAR16 *verb, IN CHAR16 *args)
 {
-    if (CompaireString(verb, L"exit"))
+    if (compaireString(verb, L"exit"))
     {
         gBS->Exit(gImageHandle, 0, 0, NULL);
     }
-    else if (CompaireString(verb, L"reset"))
+    else if (compaireString(verb, L"reset"))
     {
         Print(L"Ok.");
         gST->RuntimeServices->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
     }
-    else if (CompaireString(verb, L"reinitialize"))
+    else if (compaireString(verb, L"reinitialize"))
     {
         Print(L"Ok.");
         gST->RuntimeServices->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
     }
-    else if (CompaireString(verb, L"shutdown"))
+    else if (compaireString(verb, L"shutdown"))
     {
         Print(L"Ok.");
         gST->RuntimeServices->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
     }
-    else if (CompaireString(verb, L"time"))
+    else if (compaireString(verb, L"time"))
     {
         unsigned int unixtime = getTime(1);
         Print(L"%u\n", unixtime);
     }
-    else if (CompaireString(verb, L"timeset"))
+    else if (compaireString(verb, L"timeset"))
     {
         EFI_TIME time;
         CHAR16 strtmp[9];
@@ -128,27 +73,27 @@ void HandleVerb(IN CHAR16 *verb, IN CHAR16 *args)
 
         Print(L"YEAR [1900-9999]: ");
         readLine(strtmp, 9);
-        time.Year = parseInt(strtmp);
+        time.Year = strtoint(strtmp);
 
         Print(L"MONTH [1-12]: ");
         readLine(strtmp, 9);
-        time.Month = parseInt(strtmp);
+        time.Month = strtoint(strtmp);
 
         Print(L"DAY [1-31]: ");
         readLine(strtmp, 9);
-        time.Day = parseInt(strtmp);
+        time.Day = strtoint(strtmp);
 
         Print(L"HOUR [0-23]: ");
         readLine(strtmp, 9);
-        time.Hour = parseInt(strtmp);
+        time.Hour = strtoint(strtmp);
 
         Print(L"MINUTE [0-59]: ");
         readLine(strtmp, 9);
-        time.Minute = parseInt(strtmp);
+        time.Minute = strtoint(strtmp);
 
         Print(L"SECOND [0-59]: ");
         readLine(strtmp, 9);
-        time.Second = parseInt(strtmp);
+        time.Second = strtoint(strtmp);
 
         gST->RuntimeServices->SetTime(&time);
 
