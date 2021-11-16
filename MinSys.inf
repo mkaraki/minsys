@@ -7,6 +7,7 @@
   ENTRY_POINT = UefiMain
 
 [Sources]
+  time.c
   UefiMain.c
 
 [Packages]

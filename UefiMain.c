@@ -4,6 +4,8 @@
 // To call gBS (Global Boot Services)
 #include <Library/UefiBootServicesTableLib.h>
 
+#include "time.h"
+
 void ReadLine(IN EFI_SYSTEM_TABLE *SystemTable, OUT CHAR16 *ReturnArray, int len)
 {
     SystemTable->ConOut->EnableCursor(SystemTable->ConOut, 1);
@@ -116,12 +118,11 @@ unsigned long getTime(int printToo)
         Print(L"Error getting time\n");
         return 0;
     }
-    unsigned long unixTime = (time.Year - 1970) * 365 * 24 * 60 * 60 + (time.Month - 1) * 30 * 24 * 60 * 60 + time.Day * 24 * 60 * 60 + time.Hour * 60 * 60 + time.Minute * 60 + time.Second;
     if (printToo)
     {
         Print(L"%d-%d-%d %d:%d:%d\n", time.Year, time.Month, time.Day, time.Hour, time.Minute, time.Second);
     }
-    return unixTime;
+    return (unsigned long)getUnixTime(&time);
 }
 
 void HandleVerb(IN CHAR16 *verb, IN CHAR16 *args)
