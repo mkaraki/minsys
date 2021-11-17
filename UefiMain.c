@@ -63,7 +63,9 @@ void HandleVerb(IN CHAR16 *verb, IN CHAR16 *args)
     else if (compaireString(verb, L"time"))
     {
         unsigned int unixtime = getTime(1);
-        Print(L"%u\n", unixtime);
+        CHAR16 unixtimestr[30];
+        inttostr((int)unixtime, unixtimestr);
+        Print(unixtimestr);
     }
     else if (compaireString(verb, L"timeset"))
     {

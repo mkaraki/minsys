@@ -45,3 +45,38 @@ int strtoint(IN CHAR16 *source)
 
     return result;
 }
+
+int getintdigit(int input)
+{
+    for (int i = 1;; i++)
+    {
+        if ((int)((unsigned long)input % ulongpow(10, i)) == input)
+            return i;
+    }
+}
+
+int getSpecificDigitFromInt(int src, int digit)
+{
+    return (int)((unsigned long)src % ulongpow(10, digit) / ulongpow(10, digit - 1));
+}
+
+void inttostr(int input, OUT CHAR16 *output)
+{
+    int digit_i = 0;
+
+    if (input < 0)
+    {
+        output[0] = L'-';
+        input = intabs(input);
+        digit_i++;
+    }
+
+    for (int i = getintdigit(input); i > 0; i--)
+    {
+        int specific_digit = getSpecificDigitFromInt(input, i);
+        output[digit_i] = L'0' + specific_digit;
+        digit_i++;
+    }
+
+    output[digit_i] = 0;
+}
