@@ -41,33 +41,33 @@ unsigned long getTime(int printToo)
 
 void HandleVerb(IN CHAR16 *verb, IN CHAR16 *args)
 {
-    if (compaireString(verb, L"exit"))
+    if (strcmp(verb, L"exit"))
     {
         gBS->Exit(gImageHandle, 0, 0, NULL);
     }
-    else if (compaireString(verb, L"reset"))
+    else if (strcmp(verb, L"reset"))
     {
         Print(L"Ok.");
         gST->RuntimeServices->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
     }
-    else if (compaireString(verb, L"reinitialize"))
+    else if (strcmp(verb, L"reinitialize"))
     {
         Print(L"Ok.");
         gST->RuntimeServices->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
     }
-    else if (compaireString(verb, L"shutdown"))
+    else if (strcmp(verb, L"shutdown"))
     {
         Print(L"Ok.");
         gST->RuntimeServices->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
     }
-    else if (compaireString(verb, L"time"))
+    else if (strcmp(verb, L"time"))
     {
         unsigned int unixtime = getTime(1);
         CHAR16 unixtimestr[30];
         inttostr((int)unixtime, unixtimestr);
         Print(unixtimestr);
     }
-    else if (compaireString(verb, L"timeset"))
+    else if (strcmp(verb, L"timeset"))
     {
         EFI_TIME time;
         CHAR16 strtmp[9];

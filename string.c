@@ -1,6 +1,6 @@
 #include "string.h"
 
-int compaireString(IN CHAR16 *a, IN CHAR16 *b)
+int strcmp(IN CHAR16 *a, IN CHAR16 *b)
 {
     int i = 0;
     while (a[i] != 0)
